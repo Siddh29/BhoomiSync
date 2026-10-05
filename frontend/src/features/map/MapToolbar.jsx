@@ -1,0 +1,5 @@
+import {Plus,Minus,Maximize,LocateFixed,RotateCcw,Layers,SquareSplitHorizontal} from 'lucide-react';
+export default function MapToolbar({onAction,layersOpen,onLayers,compare,onCompare,hasSelection,ready}) {
+  const tools=[['zoomIn','Zoom in',Plus],['zoomOut','Zoom out',Minus],['fit','Fit all parcels',Maximize],['selection','Focus selected parcel',LocateFixed],['reset','Reset map view',RotateCcw]];
+  return <div className="map-tool-rail" role="toolbar" aria-label="Map tools">{tools.map(([action,label,Icon])=><button key={action} className="icon-button" aria-label={label} title={label} disabled={!ready || action==='selection'&&!hasSelection} onClick={()=>onAction(action)}><Icon/></button>)}<div className="tool-divider"/><button className={`icon-button ${layersOpen?'is-pressed':''}`} title="Layer manager" aria-label="Layer manager" aria-pressed={layersOpen} onClick={onLayers}><Layers/></button><button className={`icon-button ${compare?'is-pressed':''}`} title="Compare cadastral and municipal boundaries" aria-label="Compare sources" aria-pressed={compare} onClick={onCompare}><SquareSplitHorizontal/></button></div>;
+}

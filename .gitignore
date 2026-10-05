@@ -1,0 +1,16 @@
+node_modules/
+.venv/
+frontend/dist/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+backend/data/**/*.sqlite*
+backend/data/demo/
+backend/data/exports/
+backend/data/raw/
+backend/data/context/rasters/
+backend/data/operations/
+.env
+.env.*
+!.env.example
+.recovery/

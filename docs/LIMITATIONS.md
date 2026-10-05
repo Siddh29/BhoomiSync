@@ -1,0 +1,13 @@
+# Limitations
+- All bundled data is simulated. No authoritative ownership, government API, accuracy evaluation or trained model is claimed.
+- Confidence is a configurable heuristic evidence score, not a legal conclusion or probability. Auto-harmonized means evidence accepted while cadastral geometry is retained.
+- Municipal assignment is deterministic one-to-one greedy matching, not a global optimum. Splits/merges and registration offsets need additional models.
+- Geometry repair preserves originals and triggers review. It cannot decide legally correct boundaries. Zero-area/non-polygon observations are excluded with warnings; coverage gaps need an authoritative AOI and are deferred.
+- UTM selection uses the first parcel; compact Bengaluru datasets are supported. Wide datasets, polar data and cross-zone analysis require a better projection policy.
+- Survey joins normalize IDs but do not implement a fuzzy revenue join. Ambiguous duplicate joins require review. GNSS nearest association is restricted to 2 m when no ID is available.
+- Building change detection needs two valid epochs; cross-source parcel differences are not confirmed temporal changes.
+- GeoJSON/CSV upload only, 10 MB limit, single observation layer per role. Other vector formats and a mapping approval workflow are future work.
+- Raster metadata supports a local optional.tif if Rasterio is installed; raster tiles, drone computer vision, DSM/DTM processing and utility networks are not implemented.
+- Single local worker and SQLite snapshot. No authentication, multi-user review workflow or approval audit trail. Run/reset is serialized; service binds loopback.
+- The map has an intentional offline background and local layers; it supplies no street imagery context. MapLibre requires WebGL. Narrow windows stack map/details.
+- MapLibre's renderer bundle remains large even with lazy loading; it is loaded only for Map Review. Production/PostGIS/OGC/distributed workers are future extensions.

@@ -1,0 +1,12 @@
+{
+  "name": "bhoomisync", "private": true, "version": "0.1.0",
+  "workspaces": ["frontend"],
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "dev": "concurrently -k -n API,WEB \"node scripts/backend.mjs\" \"npm run dev --workspace frontend\"",
+    "build": "npm run build --workspace frontend",
+    "test": "node scripts/backend.mjs test",
+    "reset-demo": "node scripts/reset_demo.mjs"
+  },
+  "devDependencies": {"concurrently": "^9.1.0"}
+}

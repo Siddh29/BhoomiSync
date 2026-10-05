@@ -1,0 +1,11 @@
+BHOOMISYNC / SIH26013 / DEMONSTRATION EVIDENCE
+
+This is a demonstration field assignment, not an official land record.
+
+Parcel: BS-P-00002
+Study area: synthetic Bengaluru cadastral demonstration
+Measured pipeline evidence: municipal-to-cadastral boundary Hausdorff distance 3.929 m; polygon IoU 0.730; heuristic match confidence 71.5%.
+
+Instruction: request an RTK GNSS survey of the disputed northern boundary, compare against the retained cadastral geometry, and attach a dated survey report for officer review.
+
+The master geometry remains cadastral until a competent human authority verifies the disagreement. SHA-256 verifies this file's byte integrity after upload; it does not establish legal authenticity.

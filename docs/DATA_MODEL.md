@@ -1,0 +1,2 @@
+# Data model
+Dataset metadata: id, role, format, CRS, analysis CRS, bounds, geometry types, feature/valid counts, field mappings, warnings and status. Parcel: stable parcel_id, canonical attributes, WGS84 geometry, metric area/perimeter, observation IDs, raw source provenance, metrics, conflicts, changes, explanation and review flags. Run: id, input fingerprint, stages, summary, layers, parcels, conflicts and changes. SQLite stores versioned JSON snapshots; input files are independent immutable observations.

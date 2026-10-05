@@ -1,0 +1,6 @@
+import {Info, Play, RotateCcw} from 'lucide-react';
+import StatusIndicator from '../components/StatusIndicator';
+export default function WorkspaceBar({workspace,onRun,onReset,role}) {
+  const {summary,demo,status,active} = workspace;
+  return <header className="workspace-bar"><div className="workspace-identity"><span className="workspace-project">BhoomiSync</span><span className="separator">/</span><strong>{demo?'Bengaluru demo':'Source workspace'}</strong><span className="demo-notice" title={demo?'Synthetic prototype observations. No official land ownership information.':'User supplied data has not been independently verified.'}><Info/>{demo?'Synthetic land records':'Unverified sources'}</span></div><div className="workspace-state"><span className="run-id">{summary?`Run ${summary.run_id}`:'No completed run'}</span><StatusIndicator status={status.status}/></div><div className="workspace-actions">{demo&&<button className="button quiet" disabled={active||role==='viewer'} onClick={onReset} title="Regenerate demo inputs and clear the completed run"><RotateCcw/>Reset demo</button>}<button className="button primary" disabled={active||role==='viewer'} onClick={onRun}><Play/>{active?'Harmonizing…':'Run Harmonization'}</button></div></header>;
+}
