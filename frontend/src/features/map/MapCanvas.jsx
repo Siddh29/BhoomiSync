@@ -21,17 +21,49 @@ function coordinateGrid(bounds) {
   for(let y=Math.floor(south/step)*step;y<=north&&features.length<160;y+=step)features.push({type:'Feature',properties:{},geometry:{type:'LineString',coordinates:[[west,y],[east,y]]}});
   return {type:'FeatureCollection',features};
 }
+function ringContainsPoint([x,y],ring) {
+  let inside=false;
+  for(let i=0,j=ring.length-1;i<ring.length;j=i++){
+    const [xi,yi]=ring[i],[xj,yj]=ring[j];
+    if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)inside=!inside;
+  }
+  return inside;
+}
+function geometryContainsPoint(geometry,point) {
+  if(!geometry||!point)return false;
+  const containsPolygon=polygon=>ringContainsPoint(point,polygon[0])&&!polygon.slice(1).some(ring=>ringContainsPoint(point,ring));
+  if(geometry.type==='Polygon')return containsPolygon(geometry.coordinates);
+  if(geometry.type==='MultiPolygon')return geometry.coordinates.some(containsPolygon);
+  return false;
+}
 
-const MapCanvas=forwardRef(function MapCanvas({layers,visibility,selected,onSelect,onReady,onPosition,layersOpen,night},ref) {
+const MapCanvas=forwardRef(function MapCanvas({layers,parcels,visibility,selected,onSelect,onReady,onPosition,layersOpen,night},ref) {
   const container=useRef(null),map=useRef(null),selectionMarker=useRef(null);
-  const latest=useRef({layers,selected,onSelect,onPosition,layersOpen});
-  latest.current={layers,selected,onSelect,onPosition,layersOpen};
+  const latest=useRef({layers,parcels,selected,onSelect,onPosition,layersOpen});
+  latest.current={layers,parcels,selected,onSelect,onPosition,layersOpen};
   const [ready,setReady]=useState(false),[error,setError]=useState('');
   const fit=(collection,duration=200)=>{
     const bounds=boundsFor(collection);
     if(bounds.isEmpty()||!map.current)return;
     const width=container.current.clientWidth;
     map.current.fitBounds(bounds,{padding:{left:latest.current.layersOpen&&width>650?244:60,right:52,top:60,bottom:60},duration,maxZoom:20});
+  };
+  const interactiveLayers=['selected-fill','harmonized','conflicts','changes','cadastral','municipal','buildings_latest','buildings_old','gnss'];
+  const parcelForFeature=feature=>{
+    const properties=feature?.properties||{};
+    const sourceId=String(properties.source_id||'');
+    return latest.current.parcels?.find(parcel=>parcel.parcel_id===properties.parcel_id
+      || (properties.municipal_property_id&&parcel.municipal_property_id===properties.municipal_property_id)
+      || (properties.survey_number&&parcel.survey_number===properties.survey_number)
+      || (sourceId&&Object.values(parcel.source_ids||{}).some(ids=>String(ids).split(',').includes(sourceId))));
+  };
+  const parcelAt=(point,coordinate)=>{
+    const m=map.current;
+    const activeLayers=interactiveLayers.filter(id=>m?.getLayer(id)&&m.getLayoutProperty(id,'visibility')!=='none');
+    const features=m?.queryRenderedFeatures(point,{layers:activeLayers})||[];
+    const priority=id=>id==='selected-fill'?3:['harmonized','conflicts','changes'].includes(id)?0:['cadastral','municipal'].includes(id)?1:2;
+    const linked=features.sort((a,b)=>priority(a.layer.id)-priority(b.layer.id)).map(parcelForFeature).find(Boolean);
+    return linked||latest.current.parcels?.find(parcel=>geometryContainsPoint(parcel.geometry,coordinate));
   };
   useImperativeHandle(ref,()=>({action(action){
     const m=map.current;if(!m||!ready)return;
@@ -75,16 +107,15 @@ const MapCanvas=forwardRef(function MapCanvas({layers,visibility,selected,onSele
         m.addLayer({id:'selected-halo',source:'selected',type:'line',paint:{'line-color':'#ffffff','line-width':5}});
         m.addLayer({id:'selected-outline',source:'selected',type:'line',paint:{'line-color':'#273d42','line-width':2.5}});
         m.on('click',event=>{
-          const features=m.queryRenderedFeatures(event.point,{layers:['harmonized','conflicts','changes','selected-fill']});
-          const id=features.find(f=>f.properties?.parcel_id)?.properties.parcel_id;
-          if(id)latest.current.onSelect(id);
+          const parcel=parcelAt(event.point,event.lngLat.toArray());
+          if(parcel)latest.current.onSelect(parcel.parcel_id);
         });
         const popup=new maplibre.Popup({closeButton:false,closeOnClick:false,offset:12,className:'parcel-tooltip'});
         m.on('mousemove',event=>{
           latest.current.onPosition({longitude:event.lngLat.lng,latitude:event.lngLat.lat,zoom:m.getZoom()});
-          const features=m.queryRenderedFeatures(event.point,{layers:['harmonized','conflicts']});
-          m.getCanvas().style.cursor=features.length?'pointer':'';
-          if(features.length){const p=features[0].properties;popup.setLngLat(event.lngLat).setText(`${p.parcel_id} · ${p.confidence}%`).addTo(m);}else popup.remove();
+          const parcel=parcelAt(event.point,event.lngLat.toArray());
+          m.getCanvas().style.cursor=parcel?'pointer':'';
+          if(parcel)popup.setLngLat(event.lngLat).setText(`${parcel.parcel_id} · ${parcel.confidence}%`).addTo(m);else popup.remove();
         });
         m.on('mouseout',()=>popup.remove());
         m.on('moveend',()=>{const c=m.getCenter();latest.current.onPosition({longitude:c.lng,latitude:c.lat,zoom:m.getZoom()});});
