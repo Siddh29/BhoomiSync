@@ -29,3 +29,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 /* Keep the native geofence selector's label vertically centered inside its taller control. */
 .ops-form .s-field select{height:42px;line-height:1.4;padding:0 11px}
 
+
+/* Native selects need a real line box: the global 32px height plus 10px vertical padding clipped their labels. */
+.s-field select{height:40px;min-height:40px;padding:0 11px;line-height:1.4}
+.environment-nav>select{height:40px;padding:0 12px;line-height:1.4}
+

@@ -180,7 +180,7 @@ def run_pipeline(directory, callback=lambda stage:None):
         'harmonized_parcels':len(parcels),'matched':counts['MATCHED'],'review_required':counts['REVIEW_REQUIRED'],'low_confidence':counts['CONFLICT'],
         'needs_review':sum(p['review_required'] for p in parcels),'conflicts':len(issues),'conflict_parcels':sum(bool(p['conflicts']) for p in parcels),
         'changes':len(changes),'average_confidence':round(sum(p['confidence'] for p in parcels)/len(parcels),1),
-        'success_rate':round(100*counts['MATCHED']/len(parcels),1),'analysis_crs':analysis,'data_label':'DEMO / SIMULATED' if all(m.get('data_label')=='DEMO / SIMULATED' for m in metadata if m['status']!='MISSING') else 'USER PROVIDED / UNVERIFIED',
+        'success_rate':round(100*counts['MATCHED']/len(parcels),1),'analysis_crs':analysis,'data_label':'PROTOTYPE / NON-OFFICIAL DATASET' if all(m.get('data_label')=='PROTOTYPE / NON-OFFICIAL DATASET' for m in metadata if m['status']!='MISSING') else 'USER PROVIDED / UNVERIFIED',
         'warnings':warnings,'duration_ms':round((time.perf_counter()-start)*1000,2),'confidence_note':'Explainable heuristic evidence score, not a calibrated probability'}
     done(8,tick)
     return {'summary':summary,'datasets':metadata,'parcels':parcels,'conflicts':issues,'changes':changes,'layers':layers,'stages':stages,'fingerprint':fingerprint(directory)}

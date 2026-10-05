@@ -1,5 +1,5 @@
 # Reliable demo
-Run the README setup commands, then open http://127.0.0.1:5175. Bundled observations are all DEMO / SIMULATED.
+Run the README setup commands, then open http://127.0.0.1:5175. Bundled land-record observations are a Prototype / Non-official Dataset.
 
 1. Dashboard shows the current computed run. Default fixture outcome: six sources, 448 observations, 100 master parcels, 86 matched, 14 needing review, 17 conflicts, 10 differences and 93.1% mean confidence. These are verified fixture outputs, never frontend constants.
 2. Data Sources shows WGS84 cadastral/GNSS/buildings, UTM municipal polygons and a non-geometric CSV. Expand field mappings/warnings to see the invalid observation.

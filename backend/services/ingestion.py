@@ -73,7 +73,7 @@ def load_source(path, role, target_crs=None, explicit_crs=None):
         'feature_count':len(raw), 'loaded_count':len(records), 'valid_geometry_count':valid, 'bounds':bounds,
         'geometry_types':types, 'field_mapping':mappings, 'mapping_suggestions':suggestions, 'warnings':warnings,
         'status':'WARNING' if warnings else 'READY', 'quality_indicator':round(100*valid/len(raw),1) if raw and crs else None,
-        'data_label': 'DEMO / SIMULATED' if any('DEMO' in str(r.get('raw_properties',{}).get('data_label','')) for r in records) else 'USER PROVIDED / UNVERIFIED'}
+        'data_label': 'PROTOTYPE / NON-OFFICIAL DATASET' if any(any(tag in str(r.get('raw_properties',{}).get('data_label','')).upper() for tag in ('DEMO', 'PROTOTYPE', 'SYNTHETIC')) for r in records) else 'USER PROVIDED / UNVERIFIED'}
 
 
 def display_layer(records, analysis):

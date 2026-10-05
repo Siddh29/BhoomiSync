@@ -5,4 +5,11 @@ export const metres = value => value == null ? 'No observation' : `${formatNumbe
 export const titleCase = value => (value || 'Unknown').toLowerCase().replaceAll('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
 export const sourceName = id => ({cadastral:'Cadastral base',municipal:'Municipal GIS',revenue:'Revenue records',gnss:'GNSS survey',buildings_old:'Previous buildings',buildings_latest:'Latest buildings',harmonized:'Harmonized parcels',conflicts:'Conflict parcels',changes:'Detected changes',buildings:'Building epochs'}[id] || titleCase(id));
 export const statusLabel = value => ({MATCHED:'Matched',REVIEW_REQUIRED:'Review required',CONFLICT:'Conflict',RUNNING:'Running',COMPLETED:'Complete',FAILED:'Failed',IDLE:'Not run',READY:'Ready',WARNING:'Warning',CRITICAL:'Critical',INFO:'Info',MISSING:'Missing',REJECTED:'Rejected',DISCONNECTED:'Disconnected'}[value] || titleCase(value));
+export const pilotRecordLabel = value => {
+  if (!value) return '—';
+  const match = /^(?:Different )?Demo Holder(?: (\d+))?$/i.exec(String(value));
+  if (!match) return value;
+  return match[1] ? `Pilot Record ${match[1]}` : 'Alternate Pilot Record';
+};
+export const datasetLabel = value => /DEMO\s*\/\s*SIMULATED|SYNTHETIC/i.test(String(value||'')) ? 'Prototype / Non-official Dataset' : value;
 export const metricEvidence = metrics => Object.entries(metrics || {}).filter(([,value])=>value!=null).map(([key,value]) => `${titleCase(key)}: ${typeof value === 'number' ? formatNumber(value, 2) : typeof value === 'object' ? JSON.stringify(value) : value}`).join(' · ');

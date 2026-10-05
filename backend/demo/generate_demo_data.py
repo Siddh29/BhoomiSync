@@ -6,7 +6,7 @@ from shapely.geometry import box, Polygon, Point, mapping
 from shapely.affinity import translate, scale
 from backend.services.crs import reproject, transformer
 
-LABEL = 'DEMO / SIMULATED — not official land ownership information'
+LABEL = 'PROTOTYPE / NON-OFFICIAL DATASET -- not official land ownership information'
 
 
 def generate(directory):
@@ -24,7 +24,7 @@ def generate(directory):
         x, y = x0 + col * 34, y0 + row * 34
         base = box(x, y, x + 30, y + 30)
         survey = f'SY-{i:04d}'
-        owner = f'Demo Holder {i:03d}'
+        owner = f'Pilot Record {i:03d}'
         add('cadastral', base, {'parcel_no': f'BS-P-{i:05d}', 'survey_no': survey, 'owner': owner, 'land_use': 'Residential', 'data_label': LABEL})
         if i != 9:
             municipal = translate(base, xoff=.25, yoff=.15)
@@ -32,7 +32,7 @@ def generate(directory):
             if i == 4: municipal = box(x, y, x + 37, y + 30)
             if i == 8: municipal = translate(base, xoff=20)
             if i == 10: municipal = Polygon([(x,y), (x+30,y+30), (x,y+30), (x+30,y), (x,y)])
-            add('municipal', municipal, {'property_id': f'MUN-{i:04d}', 'surveyNumber': 'UNRELATED-777' if i == 6 else survey, 'holder': 'Different Demo Holder' if i == 6 else owner, 'usage': 'Commercial' if i == 6 else 'Residential', 'data_label': LABEL})
+            add('municipal', municipal, {'property_id': f'MUN-{i:04d}', 'surveyNumber': 'UNRELATED-777' if i == 6 else survey, 'holder': f'Alternate Pilot Record {i:03d}' if i == 6 else owner, 'usage': 'Commercial' if i == 6 else 'Residential', 'data_label': LABEL})
         revenue.append({'record_id': f'REV-{i:04d}', 'Survey Number': survey, 'owner': owner, 'recorded_area': 1062 if i in (3, 13, 23) else 900, 'land_use': 'Residential', 'data_label': LABEL})
         if i <= 20:
             add('gnss', Point(x + (4.2 if i == 7 else .35), y + 10), {'id': f'GNSS-{i}', 'survey_no': survey, 'data_label': LABEL})
